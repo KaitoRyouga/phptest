@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  lab:
+    restart: always
+    build: 
+        context: .
+        dockerfile: Dockerfile
+    ports:
+      - "1116:22"
+    networks:
+      service_network:
+
+  nginx-proxy:
+    restart: always
+    image: jwilder/nginx-proxy
+    ports:
+      - 80:80
+      - 443:443
+    container_name: nginx-proxy
+    networks:
+      service_network:
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - nginx-certs:/etc/nginx/certs
+      - nginx-vhost:/etc/nginx/vhost.d
+      - nginx-html:/usr/share/nginx/html
+
+networks:
+  service_network:
+
+volumes:
+  nginx-certs:
+  nginx-vhost:
+  nginx-html:
+  db_data:
